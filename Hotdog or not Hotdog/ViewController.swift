@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
-        imagePicker.allowsEditing = false
+        imagePicker.allowsEditing = true
     }
     
     @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
@@ -32,6 +32,10 @@ class ViewController: UIViewController {
         let requst = VNCoreMLRequest(model: model) { (request, error) in
             guard let results = request.results as? [VNClassificationObservation] else {fatalError("model failed to proccess image")}
             print(results)
+            if let firstResult = results.first  {
+                let formatedConfidence = String(format: "%.2f %", firstResult.confidence)
+                self.navigationItem.title = "\(formatedConfidence) – \(firstResult.identifier)"
+            }
         }
         // perfrom request
         let handler = VNImageRequestHandler(ciImage: image)
